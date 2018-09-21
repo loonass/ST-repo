@@ -18,18 +18,20 @@ metadata {
 		capability "Switch"
 		capability "Switch Level"
 
+		attribute   "counter", "number"
+        attribute   "occurrences", "number"
+
 		command "counterUp"
 		command "counterDown"
-
-        attribute   "counter", "string"
-	}
+        }
 
 	tiles(scale: 2) {
 			multiAttributeTile(name:"valueTile", type:"generic", canChangeIcon: true) {
 				tileAttribute("device.counter", key: "PRIMARY_CONTROL") {
 					attributeState "counter", label:'${currentValue}', icon: "st.Office.office6", backgroundColors:[
-					[value: 0, color: "#00ff00"],
-					[value: 8, color: "#ff0000"]
+					[value: 0, color: "#44b621"],	//Green
+					[value: 1, color: "#d04e00"],	//Orange
+                    [value: 2, color: "#bc2323"]	//Red
                     ]
 					}
 				tileAttribute("device.switch", key: "SECONDARY_CONTROL") {
@@ -42,11 +44,26 @@ metadata {
 					attributeState "VALUE_UP", action: "counterUp"
 					attributeState "VALUE_DOWN", action: "counterDown"
 					}
-				}
-
+            }
+            valueTile("value", "device.occurrences", width: 3, height: 3) {
+					state "val", label:'${currentValue}', defaultState: true, backgroundColors:[
+					[value: 0, color: "#ffffff"],	//White
+                    [value: 1, color: "#00a0dc"],	//Blue
+                    [value: 2, color: "#00a0dc"],	//Blue
+                    [value: 3, color: "#e86d13"]	//Orange
+                    ]
+			}
+                
 		main(["valueTile"])
-		details(["valueTile"])
+		details(["valueTile","value"])
 	}
+}
+
+preferences {
+    input name: "name", type: "text", title: "Dog's name", description: "What is your dog's name?", required: true,
+          displayDuringSetup: true
+    input name: "hours", type: "number", title: "Hours", description: "How many hours before each feed?", required: true,
+          displayDuringSetup: true
 }
 
 def installed() {
@@ -60,22 +77,29 @@ def on() {
 	log.debug "on()"
 	sendEvent(name: "switch", value: "on")
     sendEvent(name:"counter", value: 0)
+
 }
 
 def off() {
 	log.debug "off()"
 	sendEvent(name: "switch", value: "off")
-    sendEvent(name:"counter", value: 8)
+    sendEvent(name:"counter", value: hours.value)
     runEvery1Hour(counterDown)
+    occurrenceUp()
+    schedule("0 0 2 * * ?", occurrenceSet)
 }
 
-def setCounter(percent) {
-	sendEvent(name: "counter", value: percent)
+def setCounter(number) {
+	sendEvent(name: "counter", value: number)
+}
+
+def setOccurrences(number) {
+	sendEvent(name: "occurrences", value: number)
 }
 
 def counterUp() {
 	def counter = device.latestValue("counter") as Integer ?: 0
-	if (counter < 8) {
+	if (counter < hours.value) {
 		counter = counter + 1
 		setCounter(counter)
 	}
@@ -97,4 +121,13 @@ def counterDown() {
     } else {
     sendEvent(name: "switch", value: "off")
     }
+}
+
+def occurrenceUp() {
+	def occurrences = device.latestValue("occurrences") as Integer ?: 0
+	occurrences = occurrences + 1
+    setOccurrences(occurrences)
+}
+def occurrenceSet() {
+	sendEvent(name: "occurrences", value: 0)
 }
