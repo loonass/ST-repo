@@ -24,6 +24,7 @@ def installed() {
 }
 
 def updated() {
+	log.debug "Updated ${settings}"
 	unsubscribe() //TODO no longer subscribe like we used to - clean this up after all apps updated
 	initialize()
 }
