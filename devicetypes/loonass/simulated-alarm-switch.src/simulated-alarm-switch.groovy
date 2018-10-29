@@ -1,6 +1,6 @@
 metadata {
 
-	definition (name: "Simulated Alarm Switch", namespace: "loonass", author: "Mike Harvey", runLocally: True,) {
+	definition (name: "Simulated Alarm Switch", namespace: "loonass", author: "Mike Harvey", runLocally: True) {
 		capability "Switch"
 	}
 
