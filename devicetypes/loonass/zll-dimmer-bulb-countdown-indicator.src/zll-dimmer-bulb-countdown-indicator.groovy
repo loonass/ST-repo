@@ -138,6 +138,7 @@ def refresh() {
 
 def poll() {
 	refresh()
+    log.debug "Poll()"
 }
 
 /**
@@ -145,6 +146,7 @@ def poll() {
  * */
 def ping() {
 	return zigbee.levelRefresh()
+    log.debug "Ping()"
 }
 
 def healthPoll() {
