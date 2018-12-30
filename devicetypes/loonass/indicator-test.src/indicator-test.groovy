@@ -24,12 +24,17 @@ metadata {
         capability "Switch"
 		capability "Switch Level"
 
-		attribute   "counter", "number"
-		attribute   "occurrences", "number"
+		attribute "counter", "number"
+		attribute "occurrences", "number"
+		attribute "colour","string"
 
 		command "counterUp"
 		command "counterDown"
 		command "occurrencesReset"
+		command "Green"
+		command "Orange"
+		command "Red"
+
 
 		//fingerprint profileId: "C05E", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 1000", outClusters: "0000,0019"
 		fingerprint profileId: "C05E", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 1000", outClusters: "0019"
@@ -92,8 +97,7 @@ metadata {
 					state "number", label:'${currentValue}', defaultState: true, action: "occurrencesReset", backgroundColors:[
 					[value: 0, color: "#ffffff"],	//White
 					[value: 1, color: "#00a0dc"],	//Blue
-					[value: 2, color: "#00a0dc"],	//Blue
-					[value: 3, color: "#e86d13"]	//Orange
+					[value: 2, color: "#e86d13"]	//Orange
 					]
 			}
 
@@ -104,6 +108,8 @@ metadata {
 
 preferences {
 		input name: "hours", type: "number", title: "Hours", description: "How many hours before each feed?", required: true,
+			displayDuringSetup: true
+		input name: "shade", type: "number", title: "Orange Colour", description: "Set orange colour", required: true,
 			displayDuringSetup: true
 }
 
@@ -202,12 +208,17 @@ def counterUp() {
 		counter = counter + 1
 		setCounter(counter)
 	}
-	if (counter > 0) {
-	sendEvent(name: "switch", value: "off")
-    zigbee.off()
+	if (counter > 1) {
+	Red()
+    } else {
+	if (counter == 1) {
+	Orange()
 	} else {
-	on()
+	if (counter == 0) {
+	Green()
 	}
+    }
+    }
 }
 
 def counterDown() {
@@ -216,10 +227,40 @@ def counterDown() {
 		counter = counter - 1
 		setCounter(counter)
 	}
-	if (counter < 1) {
-	on()
+	if (counter > 1) {
+	Red()
+    } else {
+	if (counter == 1) {
+	Orange()
 	} else {
-	sendEvent(name: "switch", value: "off")
-    zigbee.off()
+	if (counter == 0) {
+	Green()
 	}
+    }
+    }
+}
+
+def Green() {
+	sendEvent(name: "colour", value: "Green")
+	sendEvent(name: "level", value: 100)
+	sendEvent(name: "switch", value: "on")
+	log.debug "green"
+    zigbee.setLevel("100") + zigbee.on() + zigbee.onOffRefresh()
+}
+
+def Orange() {
+	sendEvent(name: "colour", value: "Orange")
+	sendEvent(name: "level", value: shade)
+	sendEvent(name: "switch", value: "on")
+	log.debug "orange"
+	zigbee.setLevel(shade) + zigbee.on() + zigbee.onOffRefresh()
+
+}
+
+def Red() {
+	sendEvent(name: "colour", value: "Red")
+	sendEvent(name: "level", value: 0)
+	sendEvent(name: "switch", value: "off")
+    log.debug "red"
+	zigbee.setLevel("0") + zigbee.off() + zigbee.onOffRefresh()
 }
