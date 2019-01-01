@@ -75,9 +75,12 @@ metadata {
 	tiles(scale: 2) {
 			multiAttributeTile(name:"valueTile", type:"generic") {
 				tileAttribute("device.counter", key: "PRIMARY_CONTROL") {
-					attributeState "2", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#bc2323"
-                    attributeState "1", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#e86d13"
-					attributeState "0", label: '${currentValue}', icon: "st.Food & Dining.dining18", action: "off", backgroundColor:"#44b621"
+					attributeState "5", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#bc2323" //Red
+					attributeState "4", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#e86d13" //Orange
+					attributeState "3", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#e86d13" //Orange
+					attributeState "2", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#e86d13" //Orange
+					attributeState "1", label: '${currentValue}', icon: "st.Office.office6", action: "off", backgroundColor:"#e86d13" //Orange
+					attributeState "0", label: '${currentValue}', icon: "st.Food & Dining.dining18", action: "off", backgroundColor:"#44b621" //Green
 					}
 				tileAttribute("device.switch", key: "SECONDARY_CONTROL") {
 					attributeState "on", label:"On", action:"switch.off", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00A0DC", nextState:"turningOff"
@@ -109,7 +112,9 @@ metadata {
 preferences {
 		input name: "hours", type: "number", title: "Hours", description: "How many hours before each feed?", required: true,
 			displayDuringSetup: true
-		input name: "shade", type: "number", title: "Orange Colour", description: "Set orange colour", required: true,
+		input name: "shade", type: "number", title: "Orange Colour", description: "Set orange colour.", required: true,
+			displayDuringSetup: true
+		input name: "orangetime", type: "number", title: "Orange Time", description: "Set time orange is lit for.", required: true,
 			displayDuringSetup: true
 }
 
@@ -208,10 +213,10 @@ def counterUp() {
 		counter = counter + 1
 		setCounter(counter)
 	}
-	if (counter > 1) {
+	if (counter > orangetime) {
 	Red()
     } else {
-	if (counter == 1) {
+	if (counter <= orangetime && counter >0) {
 	Orange()
 	} else {
 	if (counter == 0) {
@@ -227,10 +232,10 @@ def counterDown() {
 		counter = counter - 1
 		setCounter(counter)
 	}
-	if (counter > 1) {
+	if (counter > orangetime) {
 	Red()
     } else {
-	if (counter == 1) {
+	if (counter <= orangetime && counter >0) {
 	Orange()
 	} else {
 	if (counter == 0) {
@@ -245,7 +250,7 @@ def Green() {
 	sendEvent(name: "level", value: 100)
 	sendEvent(name: "switch", value: "on")
 	log.debug "green"
-    zigbee.setLevel("100") + zigbee.on() + zigbee.onOffRefresh()
+    zigbee.setLevel(100) + zigbee.on()
 }
 
 def Orange() {
@@ -253,8 +258,7 @@ def Orange() {
 	sendEvent(name: "level", value: shade)
 	sendEvent(name: "switch", value: "on")
 	log.debug "orange"
-	zigbee.setLevel(shade) + zigbee.on() + zigbee.onOffRefresh()
-
+	zigbee.setLevel(shade) + zigbee.on()
 }
 
 def Red() {
@@ -262,5 +266,5 @@ def Red() {
 	sendEvent(name: "level", value: 0)
 	sendEvent(name: "switch", value: "off")
     log.debug "red"
-	zigbee.setLevel("0") + zigbee.off() + zigbee.onOffRefresh()
+	zigbee.setLevel(0) + zigbee.off()
 }
