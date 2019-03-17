@@ -1,13 +1,10 @@
 /**
  *  Device Type Definition File
  *
- *  Device Type:		Fibaro UBS - Dual Contact and Temperature Sensor
- *  File Name:			Fibaro UBS - Dual Contact and Temperature Sensor.groovy
- *	Initial Release:	2017-11-07
- *	Author:				Chris Charles
- *
- *  Copyright 2017 Chris Charles, based on original code by carlos.ir33, modified
- *  by Stuart Buchanan and Paul Crookes. Testing thanks to borristhecat.
+ *  Device Type:		Fibaro UBS - Contact, Temperature and Tamper Sensor
+ *  File Name:			fibaro-fgbs-001-ubs.groovy
+ *	Initial Release:	18-03-2019
+ *	Author:				Mike Harvey
  *
  ***************************************************************************************
  */
