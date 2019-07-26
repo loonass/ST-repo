@@ -26,7 +26,7 @@ metadata {
         capability "Holdable Button"
         capability "Health Check"
         capability "Sensor"
-		capability "Switch"
+        capability "Motion Sensor"
 
 
         command "enrollResponse"
