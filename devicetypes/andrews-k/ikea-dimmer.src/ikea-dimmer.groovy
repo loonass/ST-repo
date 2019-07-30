@@ -48,7 +48,7 @@ metadata {
 	}
 
     tiles(scale: 2) {
-	    controlTile("mediumSlider", "device.level", "slider", height: 2, width: 4, inactiveLabel: false) {
+	    controlTile("mediumSlider", "device.level", "slider", height: 2, width: 4, inactiveLabel: false, range:"(0..100)") {
 		    state "level", action:"switch level.setLevel"
 	    }
 	    
