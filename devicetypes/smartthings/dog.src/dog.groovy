@@ -16,7 +16,7 @@ import groovy.json.*
 import java.text.SimpleDateFormat	//needed for formatDt
 
 metadata {
-	definition(name: "dog", namespace: "smartthings", author: "SmartThings", ocfDeviceType: "oic.d.light", runLocally: true, minHubCoreVersion: '000.021.00001', executeCommandsLocally: true, genericHandler: "ZLL") {
+	definition(name: "dog", namespace: "smartthings", author: "loonass", ocfDeviceType: "oic.d.light", runLocally: true, minHubCoreVersion: '000.021.00001', executeCommandsLocally: true, genericHandler: "ZLL") {
 		capability "Actuator"
 		capability "Configuration"
 		capability "Polling"
